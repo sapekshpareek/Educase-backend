@@ -17,8 +17,9 @@ export interface Form {
   createdAt: string;
 }
 
-export interface FormSubmission {
-  formId: string;
+export interface Submission {
+  _id: string;
+  form: string;
   data: Record<string, any>;
   submittedAt: string;
 } 

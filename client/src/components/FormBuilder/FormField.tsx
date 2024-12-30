@@ -1,142 +1,78 @@
 'use client';
 
 import { Field } from '@/types/form';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import {
     Box,
-    Button,
-    Card,
-    CardContent,
-    FormControlLabel,
+    Checkbox,
+    FormControl,
     IconButton,
-    Switch,
-    TextField,
-    Typography
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField
 } from '@mui/material';
-import React from 'react';
+import { ChangeEvent } from 'react';
 
 interface FormFieldProps {
   field: Field;
-  onUpdate: (field: Field) => void;
-  onDelete: (id: string) => void;
+  onFieldChange: (field: Field) => void;
+  onDeleteField: () => void;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ field, onUpdate, onDelete }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition
-  } = useSortable({ id: field._id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition
-  };
-
-  const handleFieldChange = (property: keyof Field, value: any) => {
-    onUpdate({
+const FormField = ({ field, onFieldChange, onDeleteField }: FormFieldProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    onFieldChange({
       ...field,
-      [property]: value
+      [name as string]: value
     });
   };
 
-  const renderFieldOptions = () => {
-    if (field.type === 'select' || field.type === 'radio') {
-      return (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle2">Options:</Typography>
-          {field.options?.map((option, index) => (
-            <Box key={index} sx={{ display: 'flex', gap: 1, mt: 1 }}>
-              <TextField
-                size="small"
-                value={option}
-                onChange={(e) => {
-                  const newOptions = [...(field.options || [])];
-                  newOptions[index] = e.target.value;
-                  handleFieldChange('options', newOptions);
-                }}
-              />
-              <IconButton
-                size="small"
-                onClick={() => {
-                  const newOptions = field.options?.filter((_, i) => i !== index);
-                  handleFieldChange('options', newOptions);
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))}
-          <Button
-            size="small"
-            onClick={() => {
-              handleFieldChange('options', [...(field.options || []), '']);
-            }}
-            sx={{ mt: 1 }}
-          >
-            Add Option
-          </Button>
-        </Box>
-      );
-    }
-    return null;
+  const handleRequiredChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onFieldChange({
+      ...field,
+      required: e.target.checked
+    });
   };
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      sx={{ mb: 2 }}
-    >
-      <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconButton {...attributes} {...listeners}>
-            <DragIndicatorIcon />
-          </IconButton>
-          
-          <Box sx={{ flexGrow: 1 }}>
-            <TextField
-              fullWidth
-              label="Field Label"
-              value={field.label}
-              onChange={(e) => handleFieldChange('label', e.target.value)}
-              size="small"
-              sx={{ mb: 2 }}
-            />
-            
-            <TextField
-              fullWidth
-              label="Placeholder"
-              value={field.placeholder || ''}
-              onChange={(e) => handleFieldChange('placeholder', e.target.value)}
-              size="small"
-              sx={{ mb: 2 }}
-            />
-            
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={field.required}
-                  onChange={(e) => handleFieldChange('required', e.target.checked)}
-                />
-              }
-              label="Required"
-            />
-          </Box>
+    <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'flex-start' }}>
+      <TextField
+        name="label"
+        label="Field Label"
+        value={field.label}
+        onChange={handleChange}
+        fullWidth
+      />
+      
+      <FormControl sx={{ minWidth: 120 }}>
+        <InputLabel>Type</InputLabel>
+        <Select
+          name="type"
+          value={field.type}
+          label="Type"
+          onChange={handleChange}
+        >
+          <MenuItem value="text">Text</MenuItem>
+          <MenuItem value="number">Number</MenuItem>
+          <MenuItem value="select">Select</MenuItem>
+        </Select>
+      </FormControl>
 
-          <IconButton onClick={() => onDelete(field.id)} color="error">
-            <DeleteIcon />
-          </IconButton>
-        </Box>
+      <Checkbox
+        checked={field.required}
+        onChange={handleRequiredChange}
+        sx={{ mt: 1 }}
+      />
 
-        {renderFieldOptions()}
-      </CardContent>
-    </Card>
+      <IconButton 
+        onClick={onDeleteField}
+        sx={{ mt: 1 }}
+      >
+        <DeleteIcon />
+      </IconButton>
+    </Box>
   );
 };
 
