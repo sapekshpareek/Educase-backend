@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add School</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0077cc;
+      padding: 1rem 2rem;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #0077cc;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+
+    @media screen and (max-width: 600px) {
+      main {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>School Management System</h1>
+  </header>
+
+  <main>
+    <h2>Add a New School</h2>
+    <form id="addSchoolForm">
+      <label for="name">School Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="address">School Address:</label>
+      <input type="text" id="address" name="address" required />
+
+      <label for="latitude">Latitude:</label>
+      <input type="text" id="latitude" name="latitude" required />
+
+      <label for="longitude">Longitude:</label>
+      <input type="text" id="longitude" name="longitude" required />
+
+      <button type="submit">Add School</button>
+    </form>
+  </main>
+
+  <footer>
+    &copy; 2025 School Management System | Made with ❤️ by Sapeksh
+  </footer>
+
+  <script>
+    document.getElementById('addSchoolForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const address = document.getElementById('address').value;
+      const latitude = document.getElementById('latitude').value;
+      const longitude = document.getElementById('longitude').value;
+
+      const schoolData = { name, address, latitude, longitude };
+
+      fetch('/addSchool', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(schoolData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert('✅ School added successfully!');
+          document.getElementById('addSchoolForm').reset();
+        } else if (data.error) {
+          alert('❌ Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('❌ An error occurred while adding the school');
+      });
+    });
+  </script>
+
+</body>
+</html>
