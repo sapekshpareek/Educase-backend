@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS school_management_api;
+CREATE DATABASE IF NOT EXISTS educase_backend;
 
-USE school_management_api;
+USE educase_backend;
 
 CREATE TABLE IF NOT EXISTS schools (
     id INT AUTO_INCREMENT PRIMARY KEY,

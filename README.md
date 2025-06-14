@@ -46,9 +46,9 @@ npm install
 * Open MySQL and run the `setup.sql` file:
 
 ```sql
-CREATE DATABASE IF NOT EXISTS educase-backend;
+CREATE DATABASE IF NOT EXISTS educase_backend;
 
-USE educase-backend;
+USE educase_backend;
 
 CREATE TABLE IF NOT EXISTS schools (
     id INT AUTO_INCREMENT PRIMARY KEY,
